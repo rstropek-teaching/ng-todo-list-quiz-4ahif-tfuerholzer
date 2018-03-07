@@ -1,0 +1,93 @@
+<div style="text-align: center;">
+  <h1>
+    To-Do List
+  </h1>
+</div>
+<h4>
+  All todo items :
+</h4>
+<div>
+  <mat-expansion-panel>
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        Filter
+      </mat-panel-title>
+    </mat-expansion-panel-header>
+    <mat-checkbox (change)="onlyShowDone = !onlyShowDone; filtersChanged();">
+      Only show undone Todos
+    </mat-checkbox>
+    <hr>
+    <p>Filter by Person</p>
+    <mat-form-field>
+      <mat-select [(value)]="filteredPerson" (change)="filtersChanged()">
+        <mat-option value="!nofilter">Show all</mat-option>
+        <ng-container *ngFor="let person of availablePersons">
+          <mat-option [value]="person">{{person}}</mat-option>
+        </ng-container>
+      </mat-select>
+    </mat-form-field>
+  </mat-expansion-panel>
+</div>
+<div>
+  <mat-table #table [dataSource]="dataSource">
+    <!-- Position Column -->
+    <ng-container matColumnDef="description">
+      <mat-header-cell *matHeaderCellDef> Description </mat-header-cell>
+      <mat-cell *matCellDef="let element">
+        <mat-form-field>
+          <input matInput [value]="element.description" (change)="tableDescriptionInputChanged($event,element.id)">
+        </mat-form-field>
+      </mat-cell>
+    </ng-container>
+
+    <!-- Name Column -->
+    <ng-container matColumnDef="assignedTo">
+      <mat-header-cell *matHeaderCellDef> Name </mat-header-cell>
+      <mat-cell *matCellDef="let element">
+        <mat-form-field>
+        <mat-select (change)="tableAssignedToChaned($event,element.id)" [value]="element.assignedTo ">
+          <ng-container *ngFor="let person of availablePersons">
+            <mat-option [value]="person">{{person}}</mat-option>
+          </ng-container>
+        </mat-select>
+      </mat-form-field></mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="done">
+      <mat-header-cell *matHeaderCellDef> Done? </mat-header-cell>
+      <mat-cell *matCellDef="let element">
+        <mat-checkbox [checked]="element.done" (change)="tableDoneChanged($event,element.id)"></mat-checkbox>
+      </mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="id">
+      <mat-header-cell *matHeaderCellDef> Delete Element </mat-header-cell>
+      <mat-cell *matCellDef="let element"><button mat-raised-button (click)="deleteButtonPressed($event,element.id)">Delete</button></mat-cell>
+    </ng-container>
+
+    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+  </mat-table>
+  <div style="margin-top: 2%; margin-bottom: 0.6%">
+    <button mat-button (click)="addNewTodo()">Add new Todo</button>
+  </div>
+  <br>
+  <mat-expansion-panel>
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        Add a new Person
+      </mat-panel-title>
+    </mat-expansion-panel-header>
+
+    <mat-form-field>
+      <input matInput placeholder="Name" #input>
+    </mat-form-field>
+
+    <button (click)="addNewPerson(input.value)" mat-button>
+      Add Person
+    </button>
+    <div style="color : red;">
+      {{addPersonErrorMsg}}
+    </div>
+  </mat-expansion-panel>
+</div>
